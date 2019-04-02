@@ -52,12 +52,23 @@ for methodName, data in dirtyOutput.iteritems():
         data['isValid'] = True
         continue
 
-    # Handle a normal case
+    # Handle a normal case where the ending methods are not the same
     if dirtyReplacement.endswith(')'):
         if '#' in dirtyReplacement:
             dirtyReplacement = dirtyReplacement.split('#')[1]
-        data['isValid'] = True
-        data['cleanReplacement'] = dirtyReplacement
+        if not dirtyReplacement == data['method']:
+            data['isValid'] = True
+            data['cleanReplacement'] = dirtyReplacement
+            continue
+
+    # Handle a normal case where the methods are the same, in this case, we add classes
+    if dirtyReplacement.endswith(')'):
+        if '#' in dirtyReplacement:
+            dirtyReplacement = dirtyReplacement.split('#')[1]
+        if dirtyReplacement == data['method']:
+            dirtyReplacement = data['dirtyReplacement']
+            data['isValid'] = True
+            data['cleanReplacement'] = dirtyReplacement
         continue
 
     # Handle where replacement is not empty, but malformed

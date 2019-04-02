@@ -54,6 +54,8 @@ for methodName, data in dirtyOutput.iteritems():
 
     # Handle a normal case
     if dirtyReplacement.endswith(')'):
+        if '#' in dirtyReplacement:
+            dirtyReplacement = dirtyReplacement.split('#')[1]
         data['isValid'] = True
         data['cleanReplacement'] = dirtyReplacement
         continue

@@ -33,7 +33,10 @@ while i < len(content):
             dirtyReplacement = re.search('-->    (.*)', line).group(1)
             if dirtyReplacement.startswith('#'):
                 dirtyReplacement = dirtyReplacement[1:]
-            data['method'] = fullMethod
+            splitMethod = fullMethod.split(' ')
+            data['methodReturn'] = splitMethod[0]
+            data['method'] = splitMethod[1]
+            data['fullMethod'] = fullMethod
             data['methodName'] = methodName
             data['methodClass'] = methodClass
             data['dirtyReplacement'] = dirtyReplacement

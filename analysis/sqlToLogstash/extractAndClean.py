@@ -32,7 +32,7 @@ def postMeta():
         body = row[7]
         ownerUserId = row[8]
         lastEditorUserId = row[9]
-        lastEditeDate = row[10]
+        lastEditDate = row[10]
         lastActivityDate = row[11]
         title = row[12]
         answerCount = row[13]
@@ -46,10 +46,7 @@ def postMeta():
         # Check if deprecated API found, if so, check if replacement was found
         foundDeprecated, deprecatedMethod = depApiChecker.checkBodyForDepApi(body)
         if foundDeprecated:
-            print id, deprecatedMethod, body
             foundReplacement, replacementMethod = depApiChecker.checkBodyForRepApi(body)
-            if foundReplacement:
-                print foundReplacement, replacementMethod
 
         meta['foundDep'] = foundDeprecated
         meta['depMethod'] = deprecatedMethod
@@ -57,6 +54,14 @@ def postMeta():
         meta['repMethod'] = replacementMethod
 
         depInfo.postMeta[id] = meta
+
+        if postTypeId == 1:
+            if id not in depInfo.parentPostMeta:
+                depInfo.parentPostMeta[id] = {'foundDep': False, 'foundRep': False}
+            if foundDeprecated:
+                depInfo.parentPostMeta[id]['foundDep'] = True
+            if foundReplacement:
+                depInfo.parentPostMeta[id]['foundRep'] = True
 
         # If its a answer, we need to take care of parent meta
         if postTypeId == 2:
@@ -74,25 +79,57 @@ def outputJson():
         # Rows from SQL
         id = row[0]
         postTypeId = row[1]
-        creationDate = row[2]
-        score = row[3]
-        viewCount = row[4]
-        body = row[5]
-        ownerUserId = row[6]
-        lastEditorUserId = row[7]
-        lastEditeDate = row[8]
-        lastActivityDate = row[9]
-        title = row[10]
-        answerCount = row[11]
-        commentCount = row[12]
+        parentId = row[2]
+        acceptedAnswerId = row[3]
+        creationDate = row[4]
+        score = row[5]
+        viewCount = row[6]
+        body = row[7]
+        ownerUserId = row[8]
+        lastEditorUserId = row[9]
+        lastEditDate = row[10]
+        lastActivityDate = row[11]
+        title = row[12]
+        answerCount = row[13]
+        commentCount = row[14]
 
+        foundDep = depInfo.postMeta[id]['foundDep']
+        foundRep = depInfo.postMeta[id]['foundRep']
+
+        if postTypeId == 1:
+            postFoundDep = depInfo.parentPostMeta[id]['foundDep']
+            postFoundRep = depInfo.parentPostMeta[id]['foundRep']
+            parentId = id
+        else:
+            postFoundDep = depInfo.parentPostMeta[parentId]['foundDep']
+            postFoundRep = depInfo.parentPostMeta[parentId]['foundRep']
+
+        body = body.replace('"', '""')
         # Handle Questions
-        # if postTypeId == 1:
+        csv = '"{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}"'.format(id,
+                                                                                                       postTypeId,
+                                                                                                       parentId,
+                                                                                                       acceptedAnswerId,
+                                                                                                       creationDate,
+                                                                                                       foundDep,
+                                                                                                       foundRep,
+                                                                                                       postFoundDep,
+                                                                                                       postFoundRep,
+                                                                                                       score,
+                                                                                                       viewCount,
+                                                                                                       body,
+                                                                                                       lastEditDate,
+                                                                                                       lastActivityDate,
+                                                                                                       title,
+                                                                                                       answerCount)
+        if foundDep:
+            print csv
 
 
 def main():
     connectDb()
     postMeta()
+    outputJson()
 
 
 main()

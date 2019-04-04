@@ -11,3 +11,4 @@ for (_, className) in re.findall(pattern, classIndex):
 
 with open('classes.txt', 'w') as f:
     f.writelines(classes)
+

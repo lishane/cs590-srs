@@ -1,4 +1,5 @@
 depMapping = {}
+depRegexMapping = {}
 postMeta = {}
 parentPostMeta = {}
 db = None

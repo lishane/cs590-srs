@@ -1,3 +1,6 @@
+import json
+
+
 def createMapping(filename):
     mapping = {}
     with open(filename, 'r') as f:
@@ -8,3 +11,8 @@ def createMapping(filename):
         mapping[val[0]] = val[1]
 
     return mapping
+
+
+def createRegexMapping(filename):
+    with open(filename, 'r') as f:
+        return json.load(f)

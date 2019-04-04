@@ -6,9 +6,9 @@ with open('Posts.xml', mode='r', buffering=1) as f:
         i = 0
         line = f.readline()
         while line:
-            if 'android' in line:
+            if '&lt;android&gt;' in line:
                 lines.append(line)
                 print i
                 i += 1
                 w.write(line)
-                line = f.readline()
+            line = f.readline()

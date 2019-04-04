@@ -18,6 +18,7 @@ def connectDb():
 
 def postMeta():
     depInfo.depMapping = depApiMapper.createMapping('../mapping/cleanedMapping.txt')
+    depInfo.depRegexMapping = depApiMapper.createRegexMapping('../mapping/regexMapping.txt')
 
     depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
     for row in depInfo.c:
@@ -46,7 +47,7 @@ def postMeta():
         # Check if deprecated API found, if so, check if replacement was found
         foundDeprecated, deprecatedMethod = depApiChecker.checkBodyForDepApi(body)
         if foundDeprecated:
-            foundReplacement, replacementMethod = depApiChecker.checkBodyForRepApi(body)
+            foundReplacement, replacementMethod = depApiChecker.checkBodyForRepApi(body, deprecatedMethod)
 
         meta['foundDep'] = foundDeprecated
         meta['depMethod'] = deprecatedMethod
@@ -74,6 +75,10 @@ def postMeta():
 
 
 def outputJson():
+    numFoundDep = 0
+    numFoundRep = 0
+    numScanned = 0
+
     depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
     for row in depInfo.c:
         # Rows from SQL
@@ -122,8 +127,13 @@ def outputJson():
                                                                                                        lastActivityDate,
                                                                                                        title,
                                                                                                        answerCount)
+        numScanned += 1
         if foundDep:
-            print csv
+            numFoundDep += 1
+        if foundRep:
+            numFoundRep += 1
+
+    print numFoundDep, numFoundRep, numScanned
 
 
 def main():

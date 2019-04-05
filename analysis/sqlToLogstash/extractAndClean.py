@@ -22,6 +22,7 @@ def postMeta():
     depInfo.depRegexMapping = depApiMapper.createRegexMapping('../mapping/regexMapping.txt')
 
     depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
+    i = 0
     for row in depInfo.c:
         # Rows from SQL
         id = row[0]
@@ -76,6 +77,11 @@ def postMeta():
             if foundReplacement:
                 depInfo.parentPostMeta[parentId]['foundRep'] = True
 
+        # Logging
+        if i % 1000 == 0:
+            print "Processed " + str(i)
+        i += 1
+
 
 def outputJson():
     numFoundDep = 0
@@ -83,8 +89,9 @@ def outputJson():
     numScanned = 0
 
     with open('result.csv', 'w') as f:
-        f.write('id, postTypeId, parentId, acceptedAnswerId, creationDate, foundDep, foundRep, postFoundDep, postFoundRep, depMethod, repMethod, acceptedAnswer, score, viewCount, body, lastEditDate, lastActivityDate, title, tags, answerCount')
-        depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
+        # depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
+        depInfo.c.execute("SELECT * FROM posts")
+        i = 0
         for row in depInfo.c:
             # Rows from SQL
             id = row[0]
@@ -128,7 +135,11 @@ def outputJson():
                     if depInfo.acceptedPostMeta[parentId] == id:
                         acceptedAnswer = True
 
-            body = body.replace('"', '""')
+            # Format body/title
+            body = body.replace('"', '\'')
+            if title is not None:
+                title = title.replace('"', '\'')
+
             # Handle Questions
             csv = '"{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}"\n'.format(
                 id,
@@ -159,6 +170,10 @@ def outputJson():
                 numFoundRep += 1
 
             f.write(csv)
+            # Logging
+            if i % 1000 == 0:
+                print "Processed " + str(i)
+            i += 1
 
     print numFoundDep, numFoundRep, numScanned
 

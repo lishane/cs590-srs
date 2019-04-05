@@ -64,6 +64,8 @@ def postMeta():
                 depInfo.parentPostMeta[id]['foundDep'] = True
             if foundReplacement:
                 depInfo.parentPostMeta[id]['foundRep'] = True
+            if acceptedAnswerId is not None:
+                depInfo.acceptedPostMeta[id] = acceptedAnswerId
 
         # If its a answer, we need to take care of parent meta
         if postTypeId == 2:
@@ -97,8 +99,9 @@ def outputJson():
             lastEditDate = row[10]
             lastActivityDate = row[11]
             title = row[12]
-            answerCount = row[13]
-            commentCount = row[14]
+            tags = row[13]
+            answerCount = row[14]
+            commentCount = row[15]
 
             # Set whether or not found
             foundDep = depInfo.postMeta[id]['foundDep']
@@ -117,9 +120,16 @@ def outputJson():
             depMethod = depInfo.postMeta[id]['depMethod']
             repMethod = depInfo.postMeta[id]['repMethod']
 
+            # Get whether or not is accepted answer
+            acceptedAnswer = False
+            if postTypeId == 2:
+                if parentId in depInfo.acceptedPostMeta:
+                    if depInfo.acceptedPostMeta[parentId] == id:
+                        acceptedAnswer = True
+
             body = body.replace('"', '""')
             # Handle Questions
-            csv = '"{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}"\n'.format(
+            csv = '"{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}"\n'.format(
                 id,
                 postTypeId,
                 parentId,
@@ -131,12 +141,14 @@ def outputJson():
                 postFoundRep,
                 depMethod,
                 repMethod,
+                acceptedAnswer,
                 score,
                 viewCount,
                 body,
                 lastEditDate,
                 lastActivityDate,
                 title,
+                tags,
                 answerCount)
 
             numScanned += 1

@@ -25,20 +25,21 @@ def readQuestions():
 
 
 def readAnswers():
-    with open('Answers.xml', mode='r', buffering=1) as f:
-        with open('PostsSnippet.xml', 'w') as w:
+    with open('/home/shane/stackoverflow/Posts.xml', mode='r', buffering=1) as f:
+        with open('Answers.xml', 'w') as w:
             i = 0
             line = f.readline()
             while line:
                 if 'PostTypeId="2"' in line:
-                    match = re.match('<row Id="17377"', line)
+                    match = re.search('ParentId=\"(\d*)\"', line)
                     id = match.group(1)
                     if id in questionIdSet:
                         line = line[:-3]
-                        line += 'Tags="&lt;android&gt;"/>'
+                        line += 'Tags="&lt;android&gt;"/>\n'
                         lines.append(line)
                         if i % 1000 == 0:
                             print i
+                        i += 1
                         w.write(line)
                 line = f.readline()
 

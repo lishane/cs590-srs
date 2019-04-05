@@ -17,6 +17,7 @@ def connectDb():
 
 
 def postMeta():
+    depInfo.depMetaMapping = depApiMapper.createMetaMapping('../mapping/cleanedOutput.txt')
     depInfo.depMapping = depApiMapper.createMapping('../mapping/cleanedMapping.txt')
     depInfo.depRegexMapping = depApiMapper.createRegexMapping('../mapping/regexMapping.txt')
 
@@ -79,59 +80,72 @@ def outputJson():
     numFoundRep = 0
     numScanned = 0
 
-    depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
-    for row in depInfo.c:
-        # Rows from SQL
-        id = row[0]
-        postTypeId = row[1]
-        parentId = row[2]
-        acceptedAnswerId = row[3]
-        creationDate = row[4]
-        score = row[5]
-        viewCount = row[6]
-        body = row[7]
-        ownerUserId = row[8]
-        lastEditorUserId = row[9]
-        lastEditDate = row[10]
-        lastActivityDate = row[11]
-        title = row[12]
-        answerCount = row[13]
-        commentCount = row[14]
+    with open('result.csv', 'w') as f:
+        depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
+        for row in depInfo.c:
+            # Rows from SQL
+            id = row[0]
+            postTypeId = row[1]
+            parentId = row[2]
+            acceptedAnswerId = row[3]
+            creationDate = row[4]
+            score = row[5]
+            viewCount = row[6]
+            body = row[7]
+            ownerUserId = row[8]
+            lastEditorUserId = row[9]
+            lastEditDate = row[10]
+            lastActivityDate = row[11]
+            title = row[12]
+            answerCount = row[13]
+            commentCount = row[14]
 
-        foundDep = depInfo.postMeta[id]['foundDep']
-        foundRep = depInfo.postMeta[id]['foundRep']
+            # Set whether or not found
+            foundDep = depInfo.postMeta[id]['foundDep']
+            foundRep = depInfo.postMeta[id]['foundRep']
 
-        if postTypeId == 1:
-            postFoundDep = depInfo.parentPostMeta[id]['foundDep']
-            postFoundRep = depInfo.parentPostMeta[id]['foundRep']
-            parentId = id
-        else:
-            postFoundDep = depInfo.parentPostMeta[parentId]['foundDep']
-            postFoundRep = depInfo.parentPostMeta[parentId]['foundRep']
+            # Set parent, since for elastic, we have a column where relevant posts to that question will be true
+            if postTypeId == 1:
+                postFoundDep = depInfo.parentPostMeta[id]['foundDep']
+                postFoundRep = depInfo.parentPostMeta[id]['foundRep']
+                parentId = id
+            else:
+                postFoundDep = depInfo.parentPostMeta[parentId]['foundDep']
+                postFoundRep = depInfo.parentPostMeta[parentId]['foundRep']
 
-        body = body.replace('"', '""')
-        # Handle Questions
-        csv = '"{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}"'.format(id,
-                                                                                                       postTypeId,
-                                                                                                       parentId,
-                                                                                                       acceptedAnswerId,
-                                                                                                       creationDate,
-                                                                                                       foundDep,
-                                                                                                       foundRep,
-                                                                                                       postFoundDep,
-                                                                                                       postFoundRep,
-                                                                                                       score,
-                                                                                                       viewCount,
-                                                                                                       body,
-                                                                                                       lastEditDate,
-                                                                                                       lastActivityDate,
-                                                                                                       title,
-                                                                                                       answerCount)
-        numScanned += 1
-        if foundDep:
-            numFoundDep += 1
-        if foundRep:
-            numFoundRep += 1
+            # Set methods that were found
+            depMethod = depInfo.postMeta[id]['depMethod']
+            repMethod = depInfo.postMeta[id]['repMethod']
+
+            body = body.replace('"', '""')
+            # Handle Questions
+            csv = '"{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}"\n'.format(
+                id,
+                postTypeId,
+                parentId,
+                acceptedAnswerId,
+                creationDate,
+                foundDep,
+                foundRep,
+                postFoundDep,
+                postFoundRep,
+                depMethod,
+                repMethod,
+                score,
+                viewCount,
+                body,
+                lastEditDate,
+                lastActivityDate,
+                title,
+                answerCount)
+
+            numScanned += 1
+            if foundDep:
+                numFoundDep += 1
+            if foundRep:
+                numFoundRep += 1
+
+            f.write(csv)
 
     print numFoundDep, numFoundRep, numScanned
 

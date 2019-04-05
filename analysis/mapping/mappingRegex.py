@@ -54,15 +54,20 @@ def main():
             repRegex = getMethodRegex(repMethod, repArgs)
 
             # Get method name only no arguments
-            depName = depMethod.split('(')[0] + '('
-            repName = repMethod.split('(')[0] + '('
+            depName = depMethod.split('(')[0]
+            repName = repMethod.split('(')[0]
+
+            # Get search queries
+            depSearch = depName + '('
+            repSearch = repName + '('
 
             # Get number of arguments
             numDepArgs = len(depArgs)
             numRepArgs = len(repArgs)
 
             mapping = {'depRegex': depRegex, 'repMethod': repMethod, 'repRegex': repRegex, 'depName': depName,
-                       'repName': repName, 'numDepArgs': numDepArgs, 'numRepArgs': numRepArgs}
+                       'repName': repName, 'depSearch': depSearch, 'repSearch': repSearch, 'numDepArgs': numDepArgs,
+                       'numRepArgs': numRepArgs}
             regexMappings[depMethod] = mapping
 
     with open('regexMapping.txt', 'w') as f:

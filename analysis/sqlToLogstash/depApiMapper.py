@@ -16,3 +16,12 @@ def createMapping(filename):
 def createRegexMapping(filename):
     with open(filename, 'r') as f:
         return json.load(f)
+
+
+def createMetaMapping(filename):
+    mapping = {}
+    with open(filename, 'r') as f:
+        for depMethod, meta in json.load(f).iteritems():
+            if meta['isValid']:
+                mapping[depMethod] = meta
+    return mapping

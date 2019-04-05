@@ -83,6 +83,7 @@ def outputJson():
     numScanned = 0
 
     with open('result.csv', 'w') as f:
+        f.write('id, postTypeId, parentId, acceptedAnswerId, creationDate, foundDep, foundRep, postFoundDep, postFoundRep, depMethod, repMethod, acceptedAnswer, score, viewCount, body, lastEditDate, lastActivityDate, title, tags, answerCount')
         depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
         for row in depInfo.c:
             # Rows from SQL

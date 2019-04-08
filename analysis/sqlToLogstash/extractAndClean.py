@@ -89,8 +89,7 @@ def outputJson():
     numScanned = 0
 
     with open('result.csv', 'w') as f:
-        # depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
-        depInfo.c.execute("SELECT * FROM posts")
+        depInfo.c.execute("SELECT * FROM posts WHERE tags LIKE '%android%'")
         i = 0
         for row in depInfo.c:
             # Rows from SQL

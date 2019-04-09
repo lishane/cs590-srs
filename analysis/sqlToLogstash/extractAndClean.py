@@ -24,7 +24,7 @@ def postMeta():
 
     depInfo.c.execute("SELECT COUNT(*) FROM posts")
     rowCount = depInfo.c.fetchone()[0]
-    chunkSize = 30000
+    chunkSize = 200000
 
     i = 0
     for offset in range(0, rowCount, chunkSize):
@@ -98,7 +98,7 @@ def outputJson():
     with open('result.csv', 'w') as f:
         depInfo.c.execute("SELECT COUNT(*) FROM posts")
         rowCount = depInfo.c.fetchone()[0]
-        chunkSize = 1000
+        chunkSize = 200000
 
         i = 0
         for offset in range(0, rowCount, chunkSize):

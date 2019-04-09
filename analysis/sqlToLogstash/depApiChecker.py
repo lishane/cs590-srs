@@ -5,6 +5,7 @@ import depInfo
 # Checking String only 862/5974
 # Checking Regex only 745/5974
 # Checking Class only 110/5974
+# Checking class uppercase split
 
 def checkBodyForDepApi(body):
     # Check every deprecated API
@@ -26,7 +27,13 @@ def checkBodyForDepApi(body):
     # Check for context
     regexMeta = depInfo.depRegexMapping[foundDep]
     depMeta = depInfo.depMetaMapping[regexMeta['depName']]
-    classOnly = depMeta['methodClass'].split('.')[-1]
+    classSplit = depMeta['methodClass'].split('.')
+    classOnly = ""
+    for split in classSplit:
+        if split[0].isupper():
+            classOnly += split + "."
+    classOnly = classOnly[:-1]
+    
     if str(classOnly) not in body:
         return False, None
 

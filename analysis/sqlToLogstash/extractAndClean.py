@@ -1,4 +1,5 @@
 import MySQLdb
+import sys
 import depApiChecker
 import depInfo
 import depApiMapper
@@ -23,7 +24,7 @@ def postMeta():
 
     depInfo.c.execute("SELECT COUNT(*) FROM posts")
     rowCount = depInfo.c.fetchone()[0]
-    chunkSize = 1000
+    chunkSize = 30000
 
     i = 0
     for offset in range(0, rowCount, chunkSize):
@@ -85,6 +86,7 @@ def postMeta():
             # Logging
             if i % 1000 == 0:
                 print "Processed " + str(i)
+                sys.stdout.flush()
             i += 1
 
 

@@ -1,4 +1,3 @@
-import re
 import json
 
 with open('dirtyOutput.json') as f:
@@ -45,6 +44,10 @@ for methodName, data in dirtyOutput.iteritems():
 for methodName, data in dirtyOutput.iteritems():
     data['isValid'] = False
     dirtyReplacement = data['dirtyReplacement']
+
+    # Take care of duplicate replacement
+    if len(dirtyReplacement.split('() ')) > 1:
+        dirtyReplacement = dirtyReplacement.split('() ')[1]
 
     # If class deprecated, we can skip since it is already cleaned
     if data['isClassDeprecated']:

@@ -1,10 +1,16 @@
 import com.intellij.codeInsight.daemon.GroupNames;
 import com.intellij.codeInspection.*;
+import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.content.Content;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.*;
 
@@ -91,6 +97,17 @@ public class DeprecatedAPIInspection extends AbstractBaseJavaLocalInspectionTool
                 super.visitElement(element);
             }
 
+            @Override
+            public void visitMethod(PsiMethod method) {
+                super.visitMethod(method);
+                ToolWindow toolWindow = ToolWindowManager.getInstance(method.getProject()).getToolWindow("MyPlugin");
+                ConsoleView consoleView = TextConsoleBuilderFactory.getInstance().createBuilder(method.getProject()).getConsole();
+                Content content = toolWindow.getContentManager().getFactory().createContent(consoleView.getComponent(), "MyPlugin Output", false);
+                toolWindow.getContentManager().addContent(content);
+                consoleView.print("Hello from MyPlugin!", ConsoleViewContentType.NORMAL_OUTPUT);
+
+                method.getName();
+            }
 
             // Old method call, keeping for example, need to delete
             @Override

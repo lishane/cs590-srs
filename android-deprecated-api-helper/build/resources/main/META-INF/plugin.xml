@@ -11,10 +11,7 @@
     This Plugin suggests replacement API calls for deprecated API calls that it may find
     </description>
   <extensions defaultExtensionNs="com.intellij"/>
-  <actions>
-    <group id="MyPlugin.SampleMenu" text="Greeting" description="Greeting menu">
-      <add-to-group group-id="MainMenu" anchor="last"/>
-      <action id="Myplugin.Textboxes" class="HelloAction" text="Hello" description="Says hello"/>
-    </group>
-  </actions>
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="MyPlugin" anchor="bottom" factoryClass="com.intellij.execution.dashboard.RunDashboardToolWindowFactory"/>
+  </extensions>
 </idea-plugin>

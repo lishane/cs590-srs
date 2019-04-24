@@ -17,6 +17,13 @@
         <!-- Add your extensions here -->
     </extensions>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <toolWindow id="MyPlugin"
+                    anchor="bottom"
+                    factoryClass="com.intellij.execution.dashboard.RunDashboardToolWindowFactory"/>
+    </extensions>
+
     <!--
     <actions>
         <group id="MyPlugin.SampleMenu" text="Greeting" description="Greeting menu">

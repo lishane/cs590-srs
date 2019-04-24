@@ -52,7 +52,7 @@ for methodName, data in dirtyOutput.iteritems():
     # If class deprecated, we can skip since it is already cleaned
     if data['isClassDeprecated']:
         data['cleanReplacement'] = dirtyReplacement
-        data['isValid'] = True
+        data['isValid'] = TrueempyGetti
         continue
 
     # Handle a normal case where the ending methods are not the same
